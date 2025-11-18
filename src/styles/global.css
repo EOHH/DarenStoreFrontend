@@ -1,0 +1,26 @@
+@import url('./variables.css');
+
+/* Reset y estilos base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  color: var(--color-text-dark);
+  background-color: var(--color-secondary);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-sm);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
