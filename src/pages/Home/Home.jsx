@@ -1,86 +1,68 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductList from '../../components/products/ProductList/ProductList';
-import { productService } from '../../services/productService';
+import { products as localProducts } from '../../data/products'; // Importamos datos locales
 import './Home.css';
-
-// --- IMPORTACIÓN DE IMÁGENES ---
-// Hero Slider
-import heroImage1 from '../../assets/images/hero-1.jpg';
-import heroImage2 from '../../assets/images/hero-2.jpg';
-import heroImage3 from '../../assets/images/hero-3.jpg';
-
-// Marcas
-import nikeLogo from '../../assets/images/brands/nike.png';
-import adidasLogo from '../../assets/images/brands/adidas.png';
-import pumaLogo from '../../assets/images/brands/puma.png';
-import newBalanceLogo from '../../assets/images/brands/newbalance.png';
-import reebokLogo from '../../assets/images/brands/reebok.png';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  // Estado para productos dinámicos del backend
+  // Estado para productos dinámicos (ahora locales)
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Cargar productos al montar el componente
+  // Cargar productos al montar el componente (Simulación)
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const data = await productService.getAll();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error cargando productos destacados:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    // Simulamos un pequeño delay para dar sensación de carga real
+    const timer = setTimeout(() => {
+      setProducts(localProducts);
+      setLoading(false);
+    }, 500);
 
-    fetchProducts();
+    return () => clearTimeout(timer);
   }, []);
 
-  // Datos del Hero Slider usando las imágenes importadas
+  // Datos del Hero Slider (Usando imágenes de Unsplash para evitar errores de importación)
   const heroSlides = [
     {
       title: 'Colección Primavera 2025',
       subtitle: 'Descubre los últimos lanzamientos exclusivos',
       cta: 'Explorar Ahora',
-      image: heroImage1,
-      link: '/catalogo?filter=new'
+      image: 'https://sneakerlane.es/cdn/shop/files/AirJordan4RetroFireRed2020_GS_2_processed.png?v=1759490887&width=1445',
+      link: '/catalogo'
     },
     {
       title: 'Hasta 40% OFF',
       subtitle: 'En productos seleccionados esta temporada',
       cta: 'Ver Ofertas',
-      image: heroImage2,
+      image: 'https://images.unsplash.com/photo-1512374382149-233c42b6a83b?auto=format&fit=crop&w=1920&q=80',
       link: '/ofertas'
     },
     {
       title: 'Ediciones Limitadas',
       subtitle: 'Zapatillas únicas que no querrás perderte',
       cta: 'Descubrir',
-      image: heroImage3,
-      link: '/catalogo?filter=limited'
+      image: 'https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1920&q=80',
+      link: '/catalogo'
     }
   ];
 
   // Datos estáticos para Categorías
   const categories = [
-    { name: 'Running', icon: '🏃', color: '#6366F1', link: '/catalogo?category=running' },
-    { name: 'Casual', icon: '👟', color: '#10B981', link: '/catalogo?category=casual' },
-    { name: 'Basketball', icon: '🏀', color: '#F59E0B', link: '/catalogo?category=basketball' },
-    { name: 'Training', icon: '💪', color: '#EF4444', link: '/catalogo?category=training' },
+    { name: 'Retro', icon: '👟', color: '#6366F1', link: '/catalogo' },
+    { name: 'Casual', icon: '🏙️', color: '#10B981', link: '/catalogo' },
+    { name: 'Deportivas', icon: '🏀', color: '#F59E0B', link: '/catalogo' },
+    { name: 'Skate', icon: '🛹', color: '#EF4444', link: '/catalogo' },
   ];
 
-  // Datos de Marcas usando los logos importados
+  // Datos de Marcas (Logos CDN para asegurar que se vean)
   const brands = [
-    { name: 'Nike', logo: nikeLogo },
-    { name: 'Adidas', logo: adidasLogo },
-    { name: 'Puma', logo: pumaLogo },
-    { name: 'New Balance', logo: newBalanceLogo },
-    { name: 'Reebok', logo: reebokLogo },
+    { name: 'Nike', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg' },
+    { name: 'Adidas', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg' },
+    { name: 'Puma', logo: 'https://upload.wikimedia.org/wikipedia/commons/a/ae/Puma-logo-%28text%29.svg' }, // Nota: PNG transparente
+    { name: 'New Balance', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/New_Balance_logo.svg' },
+    { name: 'Reebok', logo: 'https://upload.wikimedia.org/wikipedia/commons/5/53/Reebok_2019_logo.svg' },
   ];
 
   // Datos estáticos de Testimonios
@@ -116,8 +98,8 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
-  // Filtrar los primeros 8 productos para la sección destacados
-  const featuredProducts = products.slice(0, 8);
+  // Filtrar los primeros 4 u 8 productos para la sección destacados
+  const featuredProducts = products.filter(p => p.isNew || p.rating >= 4.8).slice(0, 4);
 
   return (
     <div className="home">
@@ -236,7 +218,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Featured Products */}
+      {/* Featured Products (AHORA CON DATOS LOCALES) */}
       <section className="featured-products">
         <div className="section__container">
           <div className="section__header">
@@ -246,8 +228,7 @@ const Home = () => {
           
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
-              {/* Spinner simple reutilizable */}
-              <div className="product-list__spinner"></div>
+              <div className="product-list__spinner" style={{ width: '40px', height: '40px', border: '3px solid #eee', borderTopColor: '#6366F1', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
             </div>
           ) : (
             <ProductList products={featuredProducts} />
@@ -268,7 +249,7 @@ const Home = () => {
       <section className="dual-banner">
         <div className="section__container">
           <div className="dual-banner__grid">
-            <Link to="/catalogo?filter=new" className="banner-card banner-card--primary">
+            <Link to="/catalogo" className="banner-card banner-card--primary">
               <div className="banner-card__content">
                 <span className="banner-card__badge">Nuevo</span>
                 <h3 className="banner-card__title">Nuevos Lanzamientos</h3>
@@ -285,7 +266,7 @@ const Home = () => {
               </div>
             </Link>
 
-            <Link to="/ofertas" className="banner-card banner-card--secondary">
+            <Link to="/catalogo" className="banner-card banner-card--secondary">
               <div className="banner-card__content">
                 <span className="banner-card__badge">Oferta</span>
                 <h3 className="banner-card__title">Hasta 40% OFF</h3>
@@ -315,7 +296,6 @@ const Home = () => {
 
           <div className="brands__slider">
             <div className="brands__track">
-              {/* Duplicamos el array para efecto infinito si es necesario, o lo dejamos simple */}
               {[...brands, ...brands].map((brand, index) => (
                 <div key={index} className="brand-item">
                   <img src={brand.logo} alt={brand.name} className="brand-item__logo" />

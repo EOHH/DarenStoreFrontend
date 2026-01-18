@@ -7,9 +7,9 @@ export const products = [
     category: 'Retro',
     description: 'El clásico atemporal que definió una era. Confeccionado en cuero premium, es el ícono del estilo y la cultura de las zapatillas. Su diseño de corte alto y la amortiguación Air encapsulada ofrecen comodidad durante todo el día.',
     images: [
-      '/images/jordan1_Chicago_1.webp', 
-      '/images/jordan1_Chicago_2.webp', 
-      '/images/jordan1_Chicago_3.webp'
+      '/images/Air Jordan 1 Retro High OG.jpg', 
+      '/images/Air Jordan 1 Retro High OG1.jpg', 
+      '/images/Air Jordan 1 Retro High OG2.jpg'
     ],
     sizes: [7, 8, 8.5, 9, 9.5, 10, 11, 12],
     colors: ['#B91C1C', '#FFFFFF', '#000000'], // Rojo, Blanco, Negro
@@ -28,8 +28,9 @@ export const products = [
     category: 'Casual',
     description: 'Una silueta simple y limpia que se ha convertido en un básico del streetwear. Su esquema de colores blanco y negro combina con absolutamente todo, haciéndolas perfectas para el uso diario.',
     images: [
-      '/images/dunklow_panda_1.webp',
-      '/images/dunklow_panda_2.webp'
+      '/images/Nike Dunk Low Panda.jpg',
+      '/images/Nike Dunk Low Panda1.jpg',
+      '/images/Nike Dunk Low Panda2.jpg'
     ],
     sizes: [5, 6, 7, 8, 9, 10],
     colors: ['#000000', '#FFFFFF'],
@@ -48,8 +49,9 @@ export const products = [
     category: 'Modern',
     description: 'Comodidad y diseño futurista en una sola zapatilla. La tecnología Boost proporciona una amortiguación inigualable, mientras que el tejido Primeknit se adapta a tu pie como un calcetín.',
     images: [
-      '/images/yeezy350_1.webp',
-      '/images/yeezy350_2.webp'
+      '/images/Adidas Yeezy Boost 350 V2.jpg',
+      '/images/Adidas Yeezy Boost 350 V21.jpg',
+      '/images/Adidas Yeezy Boost 350 V22.jpg'
     ],
     sizes: [8, 9, 10, 11],
     colors: ['#D1D5DB', '#4B5563'], // Grises
@@ -68,7 +70,9 @@ export const products = [
     category: 'Retro',
     description: 'Un clásico de los 80 que regresó con fuerza. Estilo vintage con materiales de alta calidad y un ajuste excepcional que rinde homenaje a los jugadores profesionales de aquella época.',
     images: [
-      '/images/nb550_green_1.webp'
+      '/images/New Balance 550 White Green.jpg',
+      '/images/New Balance 550 White Green1.jpg',
+      '/images/New Balance 550 White Green2.jpg'
     ],
     sizes: [7, 8, 9, 10, 11, 12],
     colors: ['#FFFFFF', '#10B981'], // Blanco, Verde
@@ -87,7 +91,9 @@ export const products = [
     category: 'Clásicos',
     description: 'La versión mejorada del icónico Chuck Taylor. Mayor comodidad y durabilidad con detalles premium, lona más gruesa y una plantilla acolchada para uso prolongado.',
     images: [
-      '/images/chuck70_black_1.webp'
+      '/images/Converse Chuck 70 High.jpg',
+      '/images/Converse Chuck 70 High1.jpg',
+      '/images/Converse Chuck 70 High2.jpg'
     ],
     sizes: [6, 7, 8, 9, 10, 11, 12],
     colors: ['#000000', '#F3F4F6'],
@@ -106,7 +112,9 @@ export const products = [
     category: 'Retro',
     description: 'Un icono del hip-hop y el breakdance de los 80. Su silueta de ante suave es sinónimo de estilo urbano auténtico y ha perdurado a través de generaciones.',
     images: [
-      '/images/pumasuede_black_1.webp'
+      '/images/Puma Suede Classic XXI.jpg',
+      '/images/Puma Suede Classic XXI1.jpg',
+      '/images/Puma Suede Classic XXI2.jpg'
     ],
     sizes: [8, 9, 10],
     colors: ['#000000', '#FFFFFF'],
@@ -125,7 +133,9 @@ export const products = [
     category: 'Sport',
     description: 'Revolución del calzado con su unidad Air visible. Un diseño audaz y una comodidad excepcional que no pasa de moda, perfecto tanto para correr como para el estilo urbano.',
     images: [
-      '/images/airmax90_white_1.webp'
+      '/images/Nike Air Max 90.jpg',
+      '/images/Nike Air Max 901.jpg',
+      '/images/Nike Air Max 902.jpg'
     ],
     sizes: [7, 8, 9, 10, 11, 12],
     colors: ['#FFFFFF', '#9CA3AF'],
@@ -144,7 +154,9 @@ export const products = [
     category: 'Retro',
     description: 'La silueta con las alas de plástico que la hacen única. Un diseño robusto y un colorway clásico que todos desean, combinando durabilidad con un estilo agresivo.',
     images: [
-      '/images/jordan4_military_1.webp'
+      '/images/Air Jordan 4 Retro Military Black.jpg',
+      '/images/Air Jordan 4 Retro Military Black1.jpg',
+      '/images/Air Jordan 4 Retro Military Black2.jpg'
     ],
     sizes: [9, 10, 11, 12],
     colors: ['#FFFFFF', '#000000', '#9CA3AF'],
@@ -163,7 +175,9 @@ export const products = [
     category: 'Skate',
     description: 'Las zapatillas de skate clásicas por excelencia. Con la icónica banda lateral y su suela waffle duradera, son perfectas para patinar o para un look relajado.',
     images: [
-      '/images/vans_oldskool_1.webp'
+      '/images/Vans Old Skool.jpg',
+      '/images/Vans Old Skool1.jpg',
+      '/images/Vans Old Skool2.jpg'
     ],
     sizes: [6, 7, 8, 9, 10, 11],
     colors: ['#000000', '#FFFFFF'],
@@ -182,7 +196,10 @@ export const products = [
     category: 'Retro',
     description: 'Más que una zapatilla, es un símbolo. Nacida en las canchas de baloncesto del 84, esta versión de corte bajo mantiene la correa en el tobillo y el diseño en X característico.',
     images: [
-      '/images/adidas_forum_1.webp'
+      '/images/Adidas Forum Low.jpg',
+      '/images/Adidas Forum Low1.jpg',
+      '/images/Adidas Forum Low2.jpg',
+      '/images/Adidas Forum Low3.jpg'
     ],
     sizes: [7, 8, 9, 10, 11],
     colors: ['#FFFFFF', '#3B82F6'], // Blanco y Azul
@@ -201,7 +218,9 @@ export const products = [
     category: 'Modern',
     description: 'Un estilo deconstruido que redefine el look retro. Capas de ante desgastado y malla se combinan con una suela de alto rendimiento para un confort superior.',
     images: [
-      '/images/nb2002r_grey_1.webp'
+      '/images/New Balance 2002R Protection Pack.jpg',
+      '/images/New Balance 2002R Protection Pack1.jpg',
+      '/images/New Balance 2002R Protection Pack2.jpg'
     ],
     sizes: [8, 9, 10, 11],
     colors: ['#9CA3AF', '#D1D5DB'],
@@ -220,7 +239,9 @@ export const products = [
     category: 'Clásicos',
     description: 'Estilo de tenis minimalista. Cuero suave y flexible con logotipos clásicos para un look auténtico de los 80 que nunca pasa de moda.',
     images: [
-      '/images/reebok_clubc_1.webp'
+      '/images/Reebok Club C 85 Vintage.jpg',
+      '/images/Reebok Club C 85 Vintage1.jpg',
+      '/images/Reebok Club C 85 Vintage2.jpg'
     ],
     sizes: [6, 7, 8, 9, 10, 11],
     colors: ['#FEF3C7', '#10B981'], // Cream y Verde

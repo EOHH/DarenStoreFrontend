@@ -11,7 +11,7 @@ const Product = () => {
   const { addToCart } = useCart();
   
   // Configuración de WhatsApp
-  const WHATSAPP_NUMBER = "51999999999"; // ¡REEMPLAZAR CON TU NÚMERO REAL!
+  const WHATSAPP_NUMBER = "+51975991831"; // ¡REEMPLAZAR CON TU NÚMERO REAL!
 
   // Buscar producto directamente en el array local
   const product = products.find(p => p.id === parseInt(id));
