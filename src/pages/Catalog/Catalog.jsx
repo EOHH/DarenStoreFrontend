@@ -1,38 +1,55 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import ProductList from '../../components/products/ProductList/ProductList';
-import { products } from '../../data/products';
+import { products as localProducts } from '../../data/products'; // Importamos datos locales
 import './Catalog.css';
 
 const Catalog = () => {
+  // Estado para productos y carga
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [filters, setFilters] = useState({
     search: '',
     brands: [],
-    priceRange: [0, 500000],
+    priceRange: [0, 1000000], // Rango inicial amplio
     sizes: [],
     colors: [],
     onSale: false,
   });
   const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' o 'list'
+  const [viewMode, setViewMode] = useState('grid'); 
   const [showFilters, setShowFilters] = useState(false);
 
-  // Obtener valores únicos para filtros
+  // Cargar productos (Simulando petición al backend)
+  useEffect(() => {
+    setLoading(true);
+    // Simulamos un pequeño delay para dar sensación de "App Real"
+    const timer = setTimeout(() => {
+      setProducts(localProducts);
+      setLoading(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Obtener valores únicos para filtros dinámicamente
   const uniqueBrands = useMemo(() => 
     [...new Set(products.map(p => p.brand))].sort(), 
-  []);
+  [products]);
 
   const uniqueSizes = useMemo(() => 
     [...new Set(products.flatMap(p => p.sizes || []))].sort((a, b) => a - b),
-  []);
+  [products]);
 
   const uniqueColors = useMemo(() => 
     [...new Set(products.flatMap(p => p.colors || []))],
-  []);
+  [products]);
 
-  const priceRange = useMemo(() => {
-    const prices = products.map(p => p.price);
-    return [Math.min(...prices), Math.max(...prices)];
-  }, []);
+  // Calcular rango de precios real basado en los productos
+  const maxPrice = useMemo(() => {
+    if (products.length === 0) return 500000;
+    return Math.max(...products.map(p => p.price));
+  }, [products]);
 
   // Filtrar y ordenar productos
   const filteredProducts = useMemo(() => {
@@ -40,9 +57,11 @@ const Catalog = () => {
 
     // Búsqueda por texto
     if (filters.search) {
+      const searchTerm = filters.search.toLowerCase();
       result = result.filter(p => 
-        p.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-        p.brand?.toLowerCase().includes(filters.search.toLowerCase())
+        p.name.toLowerCase().includes(searchTerm) ||
+        p.brand?.toLowerCase().includes(searchTerm) ||
+        p.category?.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -52,9 +71,8 @@ const Catalog = () => {
     }
 
     // Filtrar por rango de precio
-    result = result.filter(p => 
-      p.price >= filters.priceRange[0] && p.price <= filters.priceRange[1]
-    );
+    // Nota: El filtro de precio solo aplica al límite superior en este diseño simple
+    result = result.filter(p => p.price <= filters.priceRange[1]);
 
     // Filtrar por tallas
     if (filters.sizes.length > 0) {
@@ -72,25 +90,32 @@ const Catalog = () => {
 
     // Filtrar ofertas
     if (filters.onSale) {
-      result = result.filter(p => p.onSale || p.discount);
+      result = result.filter(p => p.discount > 0);
     }
 
     // Ordenar
     switch (sortBy) {
       case 'price-asc':
-        result.sort((a, b) => a.price - b.price);
+        result.sort((a, b) => {
+            const priceA = a.price * (1 - (a.discount || 0)/100);
+            const priceB = b.price * (1 - (b.discount || 0)/100);
+            return priceA - priceB;
+        });
         break;
       case 'price-desc':
-        result.sort((a, b) => b.price - a.price);
+        result.sort((a, b) => {
+            const priceA = a.price * (1 - (a.discount || 0)/100);
+            const priceB = b.price * (1 - (b.discount || 0)/100);
+            return priceB - priceA;
+        });
         break;
       case 'name-asc':
         result.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case 'newest':
-        result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        result.sort((a, b) => (b.isNew === a.isNew) ? 0 : b.isNew ? 1 : -1);
         break;
-      default:
-        // 'featured' - mantener orden original
+      default: // 'featured' por defecto
         break;
     }
 
@@ -117,12 +142,19 @@ const Catalog = () => {
     setFilters({
       search: '',
       brands: [],
-      priceRange: priceRange,
+      priceRange: [0, maxPrice],
       sizes: [],
       colors: [],
       onSale: false,
     });
   };
+
+  // Actualizar el rango de precios cuando carguen los productos
+  useEffect(() => {
+    if (maxPrice > 0) {
+        setFilters(prev => ({ ...prev, priceRange: [0, maxPrice] }));
+    }
+  }, [maxPrice]);
 
   const activeFiltersCount = useMemo(() => {
     let count = 0;
@@ -130,9 +162,26 @@ const Catalog = () => {
     if (filters.sizes.length > 0) count++;
     if (filters.colors.length > 0) count++;
     if (filters.onSale) count++;
-    if (filters.priceRange[0] !== priceRange[0] || filters.priceRange[1] !== priceRange[1]) count++;
+    if (filters.search) count++;
+    // Si el precio máximo seleccionado es menor al precio máximo posible, cuenta como filtro
+    if (filters.priceRange[1] < maxPrice) count++;
     return count;
-  }, [filters, priceRange]);
+  }, [filters, maxPrice]);
+
+  if (loading) {
+    return (
+      <div className="catalog">
+        <div className="catalog__hero">
+          <div className="catalog__hero-content">
+            <h1 className="catalog__title">Cargando Catálogo...</h1>
+          </div>
+        </div>
+        <div className="catalog__container" style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+          <div className="catalog__spinner"></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="catalog">
@@ -191,7 +240,7 @@ const Catalog = () => {
               </svg>
               <input
                 type="text"
-                placeholder="Buscar productos..."
+                placeholder="Buscar zapatillas..."
                 value={filters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
                 className="catalog__search-input"
@@ -224,19 +273,20 @@ const Catalog = () => {
           {/* Price Range */}
           <div className="catalog__filter-group">
             <label className="catalog__filter-label">
-              Rango de Precio
+              Precio Máximo
             </label>
             <div className="catalog__price-range">
               <input
                 type="range"
-                min={priceRange[0]}
-                max={priceRange[1]}
+                min={0}
+                max={maxPrice}
+                step={10} // Pasos de 10 dólares/pesos
                 value={filters.priceRange[1]}
-                onChange={(e) => handleFilterChange('priceRange', [filters.priceRange[0], Number(e.target.value)])}
+                onChange={(e) => handleFilterChange('priceRange', [0, Number(e.target.value)])}
                 className="catalog__range-slider"
               />
               <div className="catalog__price-values">
-                <span>${filters.priceRange[0].toLocaleString('es-CO')}</span>
+                <span>$0</span>
                 <span>${filters.priceRange[1].toLocaleString('es-CO')}</span>
               </div>
             </div>
@@ -357,8 +407,8 @@ const Catalog = () => {
                 >
                   <option value="featured">Destacados</option>
                   <option value="newest">Más Recientes</option>
-                  <option value="price-asc">Precio: Menor a Mayor</option>
-                  <option value="price-desc">Precio: Mayor a Menor</option>
+                  <option value="price-asc">Precio: Bajo a Alto</option>
+                  <option value="price-desc">Precio: Alto a Bajo</option>
                   <option value="name-asc">Nombre: A-Z</option>
                 </select>
               </div>
@@ -371,7 +421,7 @@ const Catalog = () => {
                   aria-label="Vista de cuadrícula"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
                   </svg>
                 </button>
                 <button

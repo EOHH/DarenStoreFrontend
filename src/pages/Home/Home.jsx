@@ -1,38 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import ProductList from '../../components/products/ProductList/ProductList';
-import { products } from '../../data/products';
 import { Link } from 'react-router-dom';
+import ProductList from '../../components/products/ProductList/ProductList';
+import { productService } from '../../services/productService';
 import './Home.css';
+
+// --- IMPORTACIÓN DE IMÁGENES ---
+// Hero Slider
+import heroImage1 from '../../assets/images/hero-1.jpg';
+import heroImage2 from '../../assets/images/hero-2.jpg';
+import heroImage3 from '../../assets/images/hero-3.jpg';
+
+// Marcas
+import nikeLogo from '../../assets/images/brands/nike.png';
+import adidasLogo from '../../assets/images/brands/adidas.png';
+import pumaLogo from '../../assets/images/brands/puma.png';
+import newBalanceLogo from '../../assets/images/brands/newbalance.png';
+import reebokLogo from '../../assets/images/brands/reebok.png';
 
 const Home = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
+  
+  // Estado para productos dinámicos del backend
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
+  // Cargar productos al montar el componente
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const data = await productService.getAll();
+        setProducts(data);
+      } catch (error) {
+        console.error("Error cargando productos destacados:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  // Datos del Hero Slider usando las imágenes importadas
   const heroSlides = [
     {
       title: 'Colección Primavera 2025',
       subtitle: 'Descubre los últimos lanzamientos exclusivos',
       cta: 'Explorar Ahora',
-      image: '/images/hero-1.jpg',
+      image: heroImage1,
       link: '/catalogo?filter=new'
     },
     {
       title: 'Hasta 40% OFF',
       subtitle: 'En productos seleccionados esta temporada',
       cta: 'Ver Ofertas',
-      image: '/images/hero-2.jpg',
+      image: heroImage2,
       link: '/ofertas'
     },
     {
       title: 'Ediciones Limitadas',
       subtitle: 'Zapatillas únicas que no querrás perderte',
       cta: 'Descubrir',
-      image: '/images/hero-3.jpg',
+      image: heroImage3,
       link: '/catalogo?filter=limited'
     }
   ];
 
+  // Datos estáticos para Categorías
   const categories = [
     { name: 'Running', icon: '🏃', color: '#6366F1', link: '/catalogo?category=running' },
     { name: 'Casual', icon: '👟', color: '#10B981', link: '/catalogo?category=casual' },
@@ -40,14 +74,16 @@ const Home = () => {
     { name: 'Training', icon: '💪', color: '#EF4444', link: '/catalogo?category=training' },
   ];
 
+  // Datos de Marcas usando los logos importados
   const brands = [
-    { name: 'Nike', logo: '/images/brands/nike.png' },
-    { name: 'Adidas', logo: '/images/brands/adidas.png' },
-    { name: 'Puma', logo: '/images/brands/puma.png' },
-    { name: 'New Balance', logo: '/images/brands/newbalance.png' },
-    { name: 'Reebok', logo: '/images/brands/reebok.png' },
+    { name: 'Nike', logo: nikeLogo },
+    { name: 'Adidas', logo: adidasLogo },
+    { name: 'Puma', logo: pumaLogo },
+    { name: 'New Balance', logo: newBalanceLogo },
+    { name: 'Reebok', logo: reebokLogo },
   ];
 
+  // Datos estáticos de Testimonios
   const testimonials = [
     {
       name: 'María González',
@@ -72,6 +108,7 @@ const Home = () => {
     }
   ];
 
+  // Efecto para rotación automática del slider
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
@@ -79,18 +116,8 @@ const Home = () => {
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
-  const handleNewsletterSubmit = (e) => {
-    e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setEmail('');
-      setTimeout(() => setSubscribed(false), 3000);
-    }
-  };
-
+  // Filtrar los primeros 8 productos para la sección destacados
   const featuredProducts = products.slice(0, 8);
-  const bestSellers = products.filter(p => p.bestseller).slice(0, 4);
-  const newArrivals = products.slice(0, 4);
 
   return (
     <div className="home">
@@ -216,7 +243,16 @@ const Home = () => {
             <h2 className="section__title">Productos Destacados</h2>
             <p className="section__subtitle">Las zapatillas más populares de la temporada</p>
           </div>
-          <ProductList products={featuredProducts} />
+          
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '4rem' }}>
+              {/* Spinner simple reutilizable */}
+              <div className="product-list__spinner"></div>
+            </div>
+          ) : (
+            <ProductList products={featuredProducts} />
+          )}
+
           <div className="section__cta">
             <Link to="/catalogo" className="button button--primary">
               Ver Catálogo Completo
@@ -279,6 +315,7 @@ const Home = () => {
 
           <div className="brands__slider">
             <div className="brands__track">
+              {/* Duplicamos el array para efecto infinito si es necesario, o lo dejamos simple */}
               {[...brands, ...brands].map((brand, index) => (
                 <div key={index} className="brand-item">
                   <img src={brand.logo} alt={brand.name} className="brand-item__logo" />
@@ -333,51 +370,6 @@ const Home = () => {
               <span className="stat-item__label">Satisfacción</span>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Newsletter */}
-      <section className="newsletter">
-        <div className="newsletter__container">
-          <div className="newsletter__content">
-            <span className="newsletter__icon">💌</span>
-            <h2 className="newsletter__title">¡No te Pierdas Nada!</h2>
-            <p className="newsletter__subtitle">
-              Suscríbete y recibe un <strong>15% de descuento</strong> en tu primera compra
-            </p>
-          </div>
-          
-          <form className="newsletter__form" onSubmit={handleNewsletterSubmit}>
-            <div className="newsletter__input-wrapper">
-              <svg className="newsletter__input-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-              </svg>
-              <input
-                type="email"
-                placeholder="tu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="newsletter__input"
-                required
-              />
-              <button type="submit" className="newsletter__button">
-                {subscribed ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    ¡Suscrito!
-                  </>
-                ) : (
-                  'Suscribirse'
-                )}
-              </button>
-            </div>
-          </form>
-
-          <p className="newsletter__privacy">
-            Al suscribirte, aceptas nuestra política de privacidad. Puedes darte de baja en cualquier momento.
-          </p>
         </div>
       </section>
     </div>
